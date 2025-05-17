@@ -29,16 +29,18 @@ server {
     root /var/www/html;
     index index.html index.htm;
 
+    # Single-Page App – jeśli plik nie istnieje, zwróć index.html
     location / {
-        try_files $uri $uri/ =404;
+        try_files \$uri \$uri/ /index.html;
     }
 
+    # Przekierowanie zapytań REST API do backendów
     location /petclinic/api/ {
-        proxy_pass http://petclinic_backend;
-        proxy_set_header Host               $host;
-        proxy_set_header X-Real-IP          $remote_addr;
-        proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto  $scheme;
+        proxy_pass         http://petclinic_backend;
+        proxy_set_header   Host                \$host;
+        proxy_set_header   X-Real-IP           \$remote_addr;
+        proxy_set_header   X-Forwarded-For     \$proxy_add_x_forwarded_for;
+        proxy_set_header   X-Forwarded-Proto   \$scheme;
     }
 }
 EOL
