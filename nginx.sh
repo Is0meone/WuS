@@ -23,29 +23,28 @@ upstream petclinic_backend {
 }
 
 server {
-    listen      ${NGINX_PORT};
+    listen      ${NGINX_PORT} default_server;
+    server_name _;
 
-    # Obsługa statycznych plików front-endu
     root /var/www/html;
     index index.html index.htm;
 
     location / {
-        # Jeśli plik nie istnieje, przekieruj do backendu
-        try_files \$uri \$uri/ @backend;
+        try_files $uri $uri/ =404;
     }
 
-    location @backend {
+    location /petclinic/api/ {
         proxy_pass http://petclinic_backend;
-        proxy_set_header Host \$host;
-        proxy_set_header X-Real-IP \$remote_addr;
-        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto \$scheme;
+        proxy_set_header Host               $host;
+        proxy_set_header X-Real-IP          $remote_addr;
+        proxy_set_header X-Forwarded-For    $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto  $scheme;
     }
 }
 EOL
 
 sudo mv loadbalancer.conf /etc/nginx/conf.d/loadbalancer.conf
-
+sudo rm /etc/nginx/sites-enabled/default
 # --- Krok 2: Wdrożenie front-endu ---
 # Instalacja narzędzi Node.js przez nvm (jeśli nie jest zainstalowany)
 curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash
