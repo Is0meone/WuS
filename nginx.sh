@@ -61,7 +61,7 @@ cd ~/spring-petclinic-angular
 
 # Zaktualizuj pliki środowiskowe, aby front-end komunikował się z Nginx (adres VM front, czyli sam siebie)
 # Załóżmy, że aplikacja Angular odwołuje się do API przez adres "localhost" na porcie np. 80.
-sed -i "s/localhost/localhost/g" src/environments/environment.prod.ts src/environments/environment.ts
+sed -i "s|http://localhost:8080/petclinic/api|/petclinic/api|g" src/environments/environment.prod.ts src/environments/environment.ts
 sed -i "s/9966/8080/g" src/environments/environment.prod.ts src/environments/environment.ts
 
 npm install
